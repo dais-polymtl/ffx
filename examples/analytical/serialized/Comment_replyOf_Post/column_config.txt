@@ -1,0 +1,3 @@
+COLUMN,src,0,uint64
+COLUMN,dest,1,uint64
+PROJECTION,Comment_replyOf_Post,0,1,n:1

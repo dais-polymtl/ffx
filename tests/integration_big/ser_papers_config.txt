@@ -1,0 +1,6 @@
+COLUMN,pid,0,uint64
+COLUMN,title,1,string
+COLUMN,abstract,2,string
+PROJECTION,ATitle,0,2,1:1
+PROJECTION,BAbs,0,2,1:1
+PROJECTION,CTitle,0,2,1:1

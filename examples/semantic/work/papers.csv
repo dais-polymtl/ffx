@@ -1,0 +1,5 @@
+0,Graph Joins at Scale,We study join-heavy graph queries and show factorized execution reduces intermediate blow-up.
+1,Factorized Execution,We present a pipelined factorized engine and evaluate it on graph workloads.
+2,Semantic Operators,We integrate LLM operators into query plans via compact factorized prompts.
+3,Cascade Updates,We add cascade updates for cyclic constraints without materializing full joins.
+4,Prompt Compression,We compress prompts using tree-structured factorization and reduce tokens significantly.

@@ -1,0 +1,10 @@
+{
+  "num_rows": 575,
+  "columns": [
+    {"name": "src", "type": "uint64_t", "max_value": 851},
+    {"name": "dest", "type": "uint64_t", "max_value": 4050}
+  ],
+  "projections": [
+    {"name": "Comment_replyOf_Post", "source_column_idx": 0, "target_column_idx": 1, "cardinality": "n:1"}
+  ]
+}

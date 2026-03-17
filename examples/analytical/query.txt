@@ -1,0 +1,1 @@
+Q(COUNT(*)) := City_isPartOf_Country(city,country),Person_isLocatedIn_City(person,city),Forum_hasMember_Person(forum,person),Forum_containerOf_Post(forum,post),Comment_replyOf_Post(comment,post),Message_hasTag_Tag(comment,tag),Tag_hasType_TagClass(tag,tagclass)

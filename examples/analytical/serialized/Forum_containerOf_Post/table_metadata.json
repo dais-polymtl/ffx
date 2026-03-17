@@ -1,0 +1,10 @@
+{
+  "num_rows": 4314,
+  "columns": [
+    {"name": "src", "type": "uint64_t", "max_value": 421},
+    {"name": "dest", "type": "uint64_t", "max_value": 4313}
+  ],
+  "projections": [
+    {"name": "Forum_containerOf_Post", "source_column_idx": 0, "target_column_idx": 1, "cardinality": "1:n"}
+  ]
+}

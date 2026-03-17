@@ -1,0 +1,1 @@
+forum,post,comment,tag,tagclass,person,city,country

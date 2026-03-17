@@ -1,0 +1,5 @@
+COLUMN,src,0,uint64
+COLUMN,dst,1,uint64
+PROJECTION,AB,0,1,m:n
+PROJECTION,BC,0,1,m:n
+PROJECTION,R,0,1,m:n

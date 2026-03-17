@@ -1,0 +1,10 @@
+{
+  "num_rows": 50,
+  "columns": [
+    {"name": "src", "type": "uint64_t", "max_value": 49},
+    {"name": "dest", "type": "uint64_t", "max_value": 1341}
+  ],
+  "projections": [
+    {"name": "Person_isLocatedIn_City", "source_column_idx": 0, "target_column_idx": 1, "cardinality": "n:1"}
+  ]
+}

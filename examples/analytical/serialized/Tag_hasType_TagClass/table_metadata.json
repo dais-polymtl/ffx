@@ -1,0 +1,10 @@
+{
+  "num_rows": 16080,
+  "columns": [
+    {"name": "src", "type": "uint64_t", "max_value": 16079},
+    {"name": "dest", "type": "uint64_t", "max_value": 61}
+  ],
+  "projections": [
+    {"name": "Tag_hasType_TagClass", "source_column_idx": 0, "target_column_idx": 1, "cardinality": "n:1"}
+  ]
+}

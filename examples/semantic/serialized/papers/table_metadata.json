@@ -1,0 +1,16 @@
+{
+  "num_rows": 5,
+  "columns": [
+    {"name": "pid", "type": "uint64_t", "max_value": 4},
+    {"name": "title", "type": "string"},
+    {"name": "abstract", "type": "string"}
+  ],
+  "projections": [
+    {"name": "ATitle", "source_column_idx": 0, "target_column_idx": 1, "cardinality": "1:1"},
+    {"name": "AAbs", "source_column_idx": 0, "target_column_idx": 2, "cardinality": "1:1"},
+    {"name": "BTitle", "source_column_idx": 0, "target_column_idx": 1, "cardinality": "1:1"},
+    {"name": "BAbs", "source_column_idx": 0, "target_column_idx": 2, "cardinality": "1:1"},
+    {"name": "CTitle", "source_column_idx": 0, "target_column_idx": 1, "cardinality": "1:1"},
+    {"name": "CAbs", "source_column_idx": 0, "target_column_idx": 2, "cardinality": "1:1"}
+  ]
+}

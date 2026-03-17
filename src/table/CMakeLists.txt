@@ -1,0 +1,2 @@
+add_library(libtable STATIC table.cpp adj_list.cpp adj_list_builder.cpp table_loader.cpp table_loader_utils.cpp ffx_str_t.cpp string_pool.cpp string_hash_table.cpp string_dictionary.cpp)
+target_include_directories(libtable PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

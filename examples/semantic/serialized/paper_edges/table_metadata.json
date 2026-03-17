@@ -1,0 +1,12 @@
+{
+  "num_rows": 7,
+  "columns": [
+    {"name": "src", "type": "uint64_t", "max_value": 3},
+    {"name": "dst", "type": "uint64_t", "max_value": 4}
+  ],
+  "projections": [
+    {"name": "AB", "source_column_idx": 0, "target_column_idx": 1, "cardinality": "m:n"},
+    {"name": "BC", "source_column_idx": 0, "target_column_idx": 1, "cardinality": "m:n"},
+    {"name": "R", "source_column_idx": 0, "target_column_idx": 1, "cardinality": "m:n"}
+  ]
+}

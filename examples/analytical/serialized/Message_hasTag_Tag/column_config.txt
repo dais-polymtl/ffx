@@ -1,0 +1,3 @@
+COLUMN,src,0,uint64
+COLUMN,dest,1,uint64
+PROJECTION,Message_hasTag_Tag,0,1,m:n
