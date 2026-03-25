@@ -153,13 +153,13 @@ std::vector<std::string> Plan::get_operator_names(sink_type sink) const {
         }
         // Cascade Joins (check shared predicated first, then regular predicated, then shared, then regular)
         else if (dynamic_cast<INLJoinPackedCascadePredicatedShared<uint64_t>*>(op) != nullptr) {
-            operator_names.emplace_back("CASCADE_PRED_SHARED");
+            operator_names.emplace_back("INLJ_PACKED_CASCADE_PRED_SHARED");
         } else if (dynamic_cast<INLJoinPackedCascadeShared<uint64_t>*>(op) != nullptr) {
-            operator_names.emplace_back("CASCADE_SHARED");
+            operator_names.emplace_back("INLJ_PACKED_CASCADE_SHARED");
         } else if (dynamic_cast<INLJoinPackedCascadePredicated<>*>(op) != nullptr) {
-            operator_names.emplace_back("CASCADE_PRED");
+            operator_names.emplace_back("INLJ_PACKED_CASCADE_PRED");
         } else if (dynamic_cast<INLJoinPackedCascade<>*>(op) != nullptr) {
-            operator_names.emplace_back("CASCADE");
+            operator_names.emplace_back("INLJ_PACKED_CASCADE");
         }
         // GP Cascade Joins (check shared predicated first, then regular predicated, then shared, then regular)
         else if (dynamic_cast<INLJoinPackedGPCascadePredicatedShared<uint64_t>*>(op) != nullptr) {

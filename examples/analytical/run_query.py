@@ -1,8 +1,9 @@
+#!/usr/bin/env python3
 import argparse
 import os
 import pathlib
+import shutil
 import subprocess
-
 
 def _resolve_build_dir(args: argparse.Namespace) -> pathlib.Path:
     raw = args.build_dir
@@ -17,13 +18,11 @@ def _resolve_build_dir(args: argparse.Namespace) -> pathlib.Path:
         raise SystemExit(f"Not a directory: {bd}")
     return bd
 
-
 def _require_binary(build_dir: pathlib.Path, name: str) -> pathlib.Path:
     p = build_dir / name
     if not p.is_file():
         raise SystemExit(f"Missing {name!r} in {build_dir}")
     return p
-
 
 def main():
     ap = argparse.ArgumentParser(description="Run query_eval_exec on this example's serialized data")
@@ -40,7 +39,7 @@ def main():
     root_dir = pathlib.Path(__file__).parent.resolve()
     data_root = root_dir / "serialized"
     if not data_root.exists():
-        raise FileNotFoundError("Run 2_serialize.py first to create examples/analytical/serialized/")
+        raise FileNotFoundError("Run setup_data.py first to create examples/analytical/serialized/")
 
     query_file = root_dir / "query.txt"
     ordering_file = root_dir / "ordering.txt"
@@ -50,7 +49,8 @@ def main():
     cmd = [str(query_exec), str(data_root), query_str, ordering_str]
     print(f"Running command: {' '.join(cmd)}", flush=True)
     subprocess.run(cmd, check=True)
-
+    shutil.rmtree(data_root)
+    print(f"Removed {data_root}", flush=True)
 
 if __name__ == "__main__":
     main()

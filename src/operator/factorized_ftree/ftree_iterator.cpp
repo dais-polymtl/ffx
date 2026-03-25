@@ -5,6 +5,7 @@
 #include <cassert>
 #include <iostream>
 #include <vector>
+#include <limits>
 
 namespace ffx {
 namespace {

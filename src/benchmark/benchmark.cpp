@@ -692,11 +692,7 @@ static bool evaluate_query_min_sink(const std::string& serialized_root_dir, cons
 
     int idx = 0;
     while (first_op && idx < static_cast<int>(operator_names.size())) {
-        if (operator_names[idx] == "CASCADE") {
-            std::cout << operator_names[idx] << " : " << -1 << std::endl;
-        } else {
-            std::cout << operator_names[idx] << " : " << first_op->get_num_exec_call() << std::endl;
-        }
+        std::cout << operator_names[idx] << " : " << first_op->get_num_exec_call() << std::endl;
         idx++;
         first_op = first_op->next_op;
     }
@@ -847,11 +843,6 @@ bool evaluate_query(const std::string& serialized_root_dir, const std::string& q
         int idx = 0;
         auto* cur = first_op;
         while (cur && idx < static_cast<int>(operator_names.size())) {
-            if (operator_names[idx] == "CASCADE") {
-                op_exec_counts.emplace_back(operator_names[idx], -1);
-                idx++;
-                continue;
-            }
             op_exec_counts.emplace_back(operator_names[idx], static_cast<int64_t>(cur->get_num_exec_call()));
             cur = cur->next_op;
             idx++;

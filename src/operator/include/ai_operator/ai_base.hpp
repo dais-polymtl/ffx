@@ -75,6 +75,9 @@ protected:
 
     // Helper to (re)create the underlying model from _model_config_json.
     void rebuild_model();
+
+    // Intern a model output string into the LLM dictionary and return 1-based id.
+    uint64_t encode_to_dict_id(const std::string& s);
 };
 
 } // namespace ffx

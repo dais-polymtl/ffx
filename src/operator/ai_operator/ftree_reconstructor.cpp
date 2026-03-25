@@ -532,31 +532,6 @@ void FTreeReconstructor::place_llm_outputs(const FTreeBatchIterator::FullTreeInf
     const uint64_t* llm_results = _llm_batch->results;
     const size_t llm_count = _llm_batch->count;
 
-    const uint32_t root_count = _write_counts.empty() ? 0u : _write_counts[0];
-    std::vector<uint32_t> root_by_parent;
-    const bool broadcast_per_root = (_llm_batch->granularity == LLMResultBatch::Granularity::PER_ROOT);
-    if (broadcast_per_root) {
-        assert(llm_count == static_cast<size_t>(root_count) &&
-               "FTreeReconstructor: PER_ROOT requires llm_count == root_count");
-        assert(last_data_idx > 0 && "FTreeReconstructor: PER_ROOT requires at least one data level under root");
-        root_by_parent.resize(prev_count);
-        if (last_data_idx == 1) {
-            const uint16_t* off = _chain_states[last_data_idx]->offset;
-            for (uint32_t r = 0; r < root_count; ++r) {
-                const uint32_t start = off[r];
-                const uint32_t end = off[r + 1];
-                for (uint32_t p = start; p < end && p < prev_count; ++p) {
-                    root_by_parent[p] = r;
-                }
-            }
-        } else {
-            for (uint32_t p = 0; p < prev_count; ++p) {
-                root_by_parent[p] = trace_to_ancestor(last_data_idx, 0, p);
-                if (root_by_parent[p] >= root_count) root_by_parent[p] = root_count - 1;
-            }
-        }
-    }
-
     uint32_t p = 0;
     while (p < prev_count) {
         const uint32_t space = static_cast<uint32_t>(State::MAX_VECTOR_SIZE) - _write_counts[llm_idx];
@@ -575,15 +550,11 @@ void FTreeReconstructor::place_llm_outputs(const FTreeBatchIterator::FullTreeInf
             out_offset[p + batch] = static_cast<uint16_t>(base + batch);
         }
 
+        std::vector<uint32_t> root_by_parent;
         if (llm_count > 0) {
-            if (broadcast_per_root && !root_by_parent.empty()) {
-                for (uint32_t i = 0; i < batch; ++i) {
-                    const uint32_t parent_pos = p + i;
-                    const uint32_t root_pos = root_by_parent[parent_pos];
-                    out_values[_write_counts[llm_idx] + i] = llm_results[root_pos];
-                }
-            } else if (_llm_read_idx + batch <= llm_count) {
-                std::memcpy(&out_values[_write_counts[llm_idx]], &llm_results[_llm_read_idx], batch * sizeof(uint64_t));
+            if (_llm_read_idx + batch <= llm_count) {
+                std::memcpy(&out_values[_write_counts[llm_idx]], &llm_results[_llm_read_idx],
+                             batch * sizeof(uint64_t));
                 _llm_read_idx += batch;
             } else {
                 for (uint32_t i = 0; i < batch; ++i) {

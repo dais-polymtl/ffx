@@ -1,0 +1,45 @@
+# Analytical Example Configuration
+# Table names, source files, and direct column_config strings
+tables:
+  City_isPartOf_Country:
+    source: "work/City_isPartOf_Country.edges"
+    column_config:
+      - COLUMN,src,0,uint64
+      - COLUMN,dest,1,uint64
+      - PROJECTION,City_isPartOf_Country,0,1,n:1
+  Comment_replyOf_Post:
+    source: "work/Comment_replyOf_Post.edges"
+    column_config:
+      - COLUMN,src,0,uint64
+      - COLUMN,dest,1,uint64
+      - PROJECTION,Comment_replyOf_Post,0,1,n:1
+  Forum_containerOf_Post:
+    source: "work/Forum_containerOf_Post.edges"
+    column_config:
+      - COLUMN,src,0,uint64
+      - COLUMN,dest,1,uint64
+      - PROJECTION,Forum_containerOf_Post,0,1,1:n
+  Forum_hasMember_Person:
+    source: "work/Forum_hasMember_Person.edges"
+    column_config:
+      - COLUMN,src,0,uint64
+      - COLUMN,dest,1,uint64
+      - PROJECTION,Forum_hasMember_Person,0,1,m:n
+  Message_hasTag_Tag:
+    source: "work/Message_hasTag_Tag.edges"
+    column_config:
+      - COLUMN,src,0,uint64
+      - COLUMN,dest,1,uint64
+      - PROJECTION,Message_hasTag_Tag,0,1,m:n
+  Person_isLocatedIn_City:
+    source: "work/Person_isLocatedIn_City.edges"
+    column_config:
+      - COLUMN,src,0,uint64
+      - COLUMN,dest,1,uint64
+      - PROJECTION,Person_isLocatedIn_City,0,1,n:1
+  Tag_hasType_TagClass:
+    source: "work/Tag_hasType_TagClass.edges"
+    column_config:
+      - COLUMN,src,0,uint64
+      - COLUMN,dest,1,uint64
+      - PROJECTION,Tag_hasType_TagClass,0,1,n:1

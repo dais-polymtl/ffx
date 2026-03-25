@@ -27,41 +27,22 @@ void Map::init_internal() {
 }
 
 void Map::execute_internal() {
-    auto encode_to_dict_id = [this](const std::string& s) -> uint64_t {
-        ffx_str_t key(s, _llm_pool.get());
-        uint64_t id = _llm_dict->get_id(key);
-        if (id == UINT64_MAX) { id = _llm_dict->add_string(key); }
-        return id + 1;
-    };
-
     _batch_iterator->reset();
     _batch_iterator->initialize_iterators();
 
     if (!_batch_iterator->is_valid()) { return; }
 
     while (_batch_iterator->next()) {
-        size_t num_logical_tuples = _batch_iterator->count_logical_tuples();
-        if (num_logical_tuples == 0) { continue; }
-
-        // How many model outputs to request for this batch.
-        size_t num_requested_outputs = num_logical_tuples;
-        LLMResultBatch::Granularity granularity = LLMResultBatch::Granularity::PER_TUPLE;
-        if (_tuple_format == "FTREE") {
-            const std::string per = _model_config_json.value("llm_per", std::string("tuple"));
-            if (per == "root") {
-                num_requested_outputs = _batch_iterator->get_count(0);
-                granularity = LLMResultBatch::Granularity::PER_ROOT;
-            }
-        }
-        if (num_requested_outputs == 0) { continue; }
+        size_t num_tuples = _batch_iterator->count_logical_tuples();
+        if (num_tuples == 0) { continue; }
 
         // Serialize the current batch into a tabular representation.
         nlohmann::json columns =
-                _serializer->build_columns(*_batch_iterator, _schema, _required_attributes, num_logical_tuples);
+                _serializer->build_columns(*_batch_iterator, _schema, _required_attributes, num_tuples);
 
         if (_debug) {
-            std::cout << "[AI-Map][debug] tuple_format=" << _tuple_format << " logical_tuples=" << num_logical_tuples
-                      << "\n";
+            std::cout << "[AI-Map][debug] tuple_format=" << _tuple_format
+                      << " num_tuples=" << num_tuples << "\n";
             std::cout << "[AI-Map][debug] columns JSON:\n" << columns.dump(2) << "\n";
         }
 
@@ -70,9 +51,12 @@ void Map::execute_internal() {
         auto [prompt, media_data] =
                 flock::PromptManager::Render(user_prompt, columns, flock::ScalarFunctionType::COMPLETE, _tuple_format);
 
-        if (_debug) { std::cout << "[AI-Map][debug] Final prompt:\n" << prompt << "\n---\n"; }
+        if (_debug) {
+            std::cout << "[AI-Map][debug] Final prompt:\n" << prompt << "\n---\n";
+        }
 
         // Execute the model for this batch.
+        size_t num_requested_outputs = num_tuples;
         if (_llm_buffer_capacity < num_requested_outputs) {
             _llm_buffer = std::make_unique<uint64_t[]>(num_requested_outputs);
             _llm_buffer_capacity = num_requested_outputs;
@@ -81,7 +65,7 @@ void Map::execute_internal() {
 
         _model->AddCompletionRequest(prompt, static_cast<int>(num_requested_outputs), flock::OutputType::STRING,
                                      media_data);
-        auto results = _model->CollectCompletions("application/json");
+        auto results = _model->CollectCompletions("application/json")[0]["items"];
 
         if (_debug) {
             std::cout << "[AI-Map][debug] Raw model responses (" << results.size() << "):";
@@ -92,35 +76,12 @@ void Map::execute_internal() {
             std::cout << "\n";
         }
 
-        if (!results.empty()) {
-            bool parsed = false;
-            if (results.size() == 1) {
-                const auto& first = results.front();
-                if (first.is_string() || first.is_object()) {
-                    nlohmann::json j =
-                            first.is_string() ? nlohmann::json::parse(first.get<std::string>(), nullptr, false) : first;
-                    if (!j.is_discarded() && j.contains("items") && j["items"].is_array()) {
-                        const auto& arr = j["items"];
-                        const size_t take = std::min(arr.size(), num_requested_outputs);
-                        for (size_t i = 0; i < take; ++i) {
-                            std::string s = arr[i].is_string() ? arr[i].get<std::string>() : arr[i].dump();
-                            _llm_buffer[i] = encode_to_dict_id(s);
-                        }
-                        parsed = true;
-                    }
-                }
-            }
-            if (!parsed) {
-                const size_t take = std::min(results.size(), num_requested_outputs);
-                for (size_t i = 0; i < take; ++i) {
-                    std::string s = results[i].is_string() ? results[i].get<std::string>() : results[i].dump();
-                    _llm_buffer[i] = encode_to_dict_id(s);
-                }
-            }
+        for (size_t i = 0; i < num_requested_outputs; ++i) {
+            _llm_buffer[i] = encode_to_dict_id(results[i].is_string() ? results[i].get<std::string>() : results[i].dump());
         }
 
         // Append results to reconstructor (handles tree reconstruction + flushing).
-        LLMResultBatch batch{_llm_buffer.get(), num_requested_outputs, granularity};
+        LLMResultBatch batch{_llm_buffer.get(), num_requested_outputs};
         _num_output_tuples += batch.count;
         _reconstructor->append(batch);
     }

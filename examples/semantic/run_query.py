@@ -5,6 +5,7 @@ import argparse
 import json
 import os
 import pathlib
+import shutil
 import subprocess
 
 
@@ -52,7 +53,7 @@ def main() -> None:
     query_exec = _require_binary(_resolve_build_dir(args), "query_eval_exec")
     data_root = root_dir / "serialized"
     if not data_root.exists():
-        raise FileNotFoundError("Run 2_serialize.py first to create examples/semantic/serialized/")
+        raise FileNotFoundError("Run setup_data.py first to create examples/semantic/serialized/")
     ordering_str = (root_dir / "ordering.txt").read_text(encoding="utf-8").strip()
 
     prompt = (
@@ -97,6 +98,8 @@ def main() -> None:
     ]
     print("Running command:\n  " + " ".join(cmd), flush=True)
     subprocess.run(cmd, check=True, cwd=str(root_dir))
+    shutil.rmtree(data_root)
+    print(f"Removed {data_root}", flush=True)
 
 
 if __name__ == "__main__":

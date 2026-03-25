@@ -22,8 +22,6 @@ struct Schema;
 struct LLMResultBatch {
     const uint64_t* results;
     size_t count;
-    enum class Granularity : uint8_t { PER_TUPLE = 0, PER_ROOT = 1 };
-    Granularity granularity = Granularity::PER_TUPLE;
 };
 
 /// Reconstructs a factorized tree by linearizing the Steiner set into a chain

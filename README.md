@@ -27,7 +27,7 @@
 | **CMake** | 3.5+ |
 | **C++ compiler** | C++17 (GCC 7+ or Clang 15+) |
 | **Libraries** | libcurl, nlohmann-json, fmt (dev packages) |
-| **Python 3** | Optional, for example scripts |
+| **Python 3.7 or above** | Optional, for example scripts |
 
 ## 🔧 Getting started (build & test)
 
@@ -42,10 +42,6 @@ sudo apt install -y build-essential cmake \
 ```
 
 **macOS (Homebrew)** — `brew install cmake nlohmann-json fmt curl` (set `CMAKE_PREFIX_PATH` to `brew --prefix` if CMake cannot find packages).
-
-**Fedora** — `sudo dnf install gcc-c++ cmake libcurl-devel nlohmann-json-devel fmt-devel`
-
-**Windows** — same libraries via [vcpkg](https://vcpkg.io) or equivalents; pass `-DCMAKE_TOOLCHAIN_FILE=...` when needed.
 
 Clone and build:
 
@@ -64,24 +60,13 @@ cd RELEASE && ctest
 
 ## 🚀 Run an example
 
-Pipeline: raw `data/` → `1_normalize.py` → `work/` → `2_serialize.py` (`table_serializer`) → `serialized/` → `query_eval_exec`. See **[`examples/analytical/README.md`](examples/analytical/README.md)** and **[`examples/semantic/README.md`](examples/semantic/README.md)**.
-
-Semantic demo (after CMake build; set **`FFX_BUILD_DIR`** to that build directory):
-
-```bash
-cd examples/semantic
-export FFX_BUILD_DIR=/path/to/your/cmake/build
-python3 1_normalize.py && python3 2_serialize.py && python3 3_create_config.py && python3 4_run_query.py
-```
+See **[`examples/analytical/`](examples/analytical/)** and **[`examples/semantic/`](examples/semantic/)** for end-to-end demos of analytical and semantic queries. Each folder contains a `setup_data.py` script to prepare the data and a `run_query.py` script to execute the engine.
 
 Or invoke the engine directly:
 
 ```bash
-/path/to/your/cmake/build/query_eval_exec examples/semantic/serialized \
-  "Q(COUNT(*)) := T(x,y) WHERE x >= 0" "x,y"
+/path/to/your/build/query_eval_exec <serialized_root_dir> "<query>" "<ordering>"
 ```
-
-CLI format: `query_eval_exec <serialized_root_dir> "<query>" "<ordering>"` plus optional flags (e.g. `-t` for threads).
 
 ## ✨ Team
 
@@ -90,14 +75,14 @@ Developed by the [**Data & AI Systems Laboratory (DAIS Lab)**](https://github.co
 ## 📄 Cite this paper
 
 ```bibtex
-@inproceedings{yasser2026ffx,
+@article{DBLP:journals/pacmmod/YasserDM26,
   author    = {Sunny Yasser and Anas Dorbani and Amine Mhedhbi},
   title     = {Factorized and Vectorized Execution: Optimizing Analytical and Semantic Queries over Relations},
-  booktitle = {Proceedings of the ACM on Management of Data (SIGMOD)},
+  journal   = {Proc. {ACM} Manag. Data},
   volume    = {4},
   number    = {3},
   year      = {2026},
-  publisher = {ACM},
+  url       = {https://doi.org/10.1145/3802055},
   doi       = {10.1145/3802055}
 }
 ```

@@ -5,6 +5,7 @@
 #include "vector/state.hpp"
 
 #include <algorithm>
+#include <cstdint>
 #include <unordered_set>
 #include <vector>
 
@@ -80,6 +81,15 @@ void AIOperator::rebuild_model() {
     } catch (const std::exception& ex) {
         throw std::runtime_error(std::string("AIOperator: failed to construct Model: ") + ex.what());
     }
+}
+
+uint64_t AIOperator::encode_to_dict_id(const std::string& s) {
+    ffx_str_t key(s, _llm_pool.get());
+    uint64_t id = _llm_dict->get_id(key);
+    if (id == UINT64_MAX) {
+        id = _llm_dict->add_string(key);
+    }
+    return id + 1;
 }
 
 void AIOperator::init(Schema* schema) {
